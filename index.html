@@ -1,0 +1,1303 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Premium Banking Dashboard</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Syne', 'Space Mono', sans-serif; }
+    html, body { background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 50%, #162032 100%); }
+    
+    /* ===== FADE & SLIDE ANIMATIONS ===== */
+    .fade-in { animation: fadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .slide-up { animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Staggered entry animations */
+    #app-title { animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both; }
+    
+    /* ===== DRAWER ANIMATION ===== */
+    .drawer-backdrop {
+      animation: backdropFadeIn 0.3s ease-out;
+    }
+    
+    @keyframes backdropFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .drawer-content {
+      animation: drawerSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    @keyframes drawerSlideIn {
+      from { 
+        opacity: 0; 
+        transform: translateX(100%);
+      }
+      to { 
+        opacity: 1; 
+        transform: translateX(0);
+      }
+    }
+    
+    .drawer-close {
+      animation: drawerSlideOut 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    
+    @keyframes drawerSlideOut {
+      from { 
+        opacity: 1; 
+        transform: translateX(0);
+      }
+      to { 
+        opacity: 0; 
+        transform: translateX(100%);
+      }
+    }
+    
+    /* ===== BUTTON ANIMATIONS ===== */
+    .btn-hover { 
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+    .btn-hover:hover { 
+      transform: translateY(-4px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+    }
+    .btn-hover:active { 
+      transform: translateY(-1px);
+    }
+    
+    /* ===== CARD ANIMATIONS ===== */
+    .card-glow {
+      background: linear-gradient(135deg, rgba(30, 27, 75, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    
+    .card-glow-hover {
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+    }
+    
+    .card-glow-hover:hover {
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 0 40px rgba(99, 102, 241, 0.2);
+      transform: translateY(-4px);
+    }
+    
+    .card-glow-hover:active {
+      transform: translateY(-1px);
+    }
+    
+    /* ===== TRANSACTION LIST ANIMATION ===== */
+    .transaction-item {
+      animation: slideInLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    @keyframes slideInLeft {
+      from { 
+        opacity: 0; 
+        transform: translateX(-30px);
+      }
+      to { 
+        opacity: 1; 
+        transform: translateX(0);
+      }
+    }
+    
+    /* ===== BALANCE AMOUNT ANIMATION ===== */
+    @keyframes countUp {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    #balance-amount {
+      animation: countUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+    }
+    
+    /* ===== MODAL ANIMATIONS ===== */
+    .modal-backdrop {
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    .modal-content {
+      animation: modalSlideUp 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    @keyframes modalSlideUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(50px) scale(0.95);
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    /* ===== FILTER BUTTONS ANIMATION ===== */
+    .filter-btn {
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .filter-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    
+    .filter-btn.active {
+      animation: filterPulse 0.5s ease;
+    }
+    
+    @keyframes filterPulse {
+      0% { transform: scale(0.95); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+    
+    /* ===== GRADIENT ANIMATION ===== */
+    .premium-gradient {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 8s ease infinite, slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+    }
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* ===== BADGE ANIMATIONS ===== */
+    .deposit-badge { 
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+    .withdraw-badge { 
+      background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes badgePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.3); }
+      50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    }
+    
+    .withdraw-badge {
+      animation: badgePulseRed 2s ease-in-out infinite;
+    }
+    
+    @keyframes badgePulseRed {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.3); }
+      50% { box-shadow: 0 0 0 6px rgba(244, 63, 94, 0); }
+    }
+    
+    /* ===== INPUT FOCUS ANIMATIONS ===== */
+    input:focus, select:focus { outline: none; }
+    
+    input, select {
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    input:focus, select:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+    }
+    
+    /* ===== CATEGORY BADGES ===== */
+    .category-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid;
+    }
+    
+    .category-salary { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); border-color: #f59e0b; color: #fff; }
+    .category-food { background: linear-gradient(135deg, #f87171 0%, #dc2626 100%); border-color: #dc2626; color: #fff; }
+    .category-rent { background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%); border-color: #7c3aed; color: #fff; }
+    .category-shopping { background: linear-gradient(135deg, #fb7185 0%, #ec4899 100%); border-color: #ec4899; color: #fff; }
+    .category-bills { background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); border-color: #3b82f6; color: #fff; }
+    .category-investment { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); border-color: #10b981; color: #fff; }
+    .category-general { background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%); border-color: #6b7280; color: #fff; }
+    
+
+    /* Mobile Safe Area */
+    @supports (padding: max(0px)) {
+      body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+        padding-bottom: max(0px, env(safe-area-inset-bottom));
+      }
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  
+ </head>
+ <body class="h-full overflow-auto">
+  <div class="min-h-full w-full py-4 px-3 sm:py-8 sm:px-4">
+   <div class="w-full max-w-2xl mx-auto"><!-- Header with Hamburger -->
+    <div class="flex items-center justify-between mb-6 sm:mb-8 slide-up">
+     <div class="flex-1 text-center">
+      <h1 id="app-title" class="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">Personal Banking</h1>
+      <p class="text-slate-400 text-xs sm:text-sm mt-2 sm:mt-3 font-light tracking-wide">Premium Financial Management</p>
+     </div><button id="analytics-menu-btn" class="btn-hover w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-800/50 border border-indigo-400/30 hover:border-indigo-400/60 text-indigo-300 hover:text-indigo-200 flex items-center justify-center transition-all flex-shrink-0 ml-4">
+      <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg></button>
+    </div><!-- Main Card Container -->
+    <div class="slide-up space-y-4 sm:space-y-6"><!-- Balance Card -->
+     <div class="premium-gradient p-0.5 sm:p-1 rounded-2xl sm:rounded-3xl shadow-2xl">
+      <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 rounded-2xl sm:rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+       <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\" 60\ height="\&quot;60\&quot;" viewbox="\&quot;0" 0 60 xmlns="\&quot;http://www.w3.org/2000/svg\&quot;%3E%3Cg" fill="\&quot;none\&quot;" fill-rule="\&quot;evenodd\&quot;%3E%3Cg" fill-opacity="\&quot;0.05\&quot;%3E%3Cpath" d="\&quot;M36" 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30v0h-2v4h-4v2h4v4h2v6h4v4h-4zm6 34v-4h4v4h0v2h4v4h2v-4h4v-2h6zm6 4v0h4v4h0v2h4v4h2v6h4v4h6z\ %3e%3c g%3e%3c svg%3e)] opacity-40></div>
+       <div class="relative z-10">
+        <div class="mb-4 sm:mb-6">
+         <p id="balance-label" class="text-indigo-300 text-xs font-semibold tracking-widest uppercase">Available Balance</p>
+         <div class="mt-3 sm:mt-4 flex items-baseline gap-1"><span class="text-indigo-300/60 text-2xl sm:text-4xl font-light">₹</span> <span id="balance-amount" class="text-4xl sm:text-6xl font-black bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">0</span>
+         </div>
+        </div>
+        <div class="flex items-center gap-2 pt-3 sm:pt-4 border-t border-indigo-400/20"><span class="inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 text-emerald-300 text-xs font-bold">
+          <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg> Active </span>
+        </div>
+       </div>
+      </div>
+     </div><!-- Action Buttons -->
+     <div class="bg-slate-900/50 border border-indigo-400/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 backdrop-blur-sm">
+      <div class="flex gap-3 sm:gap-4"><button id="deposit-btn" class="flex-1 btn-hover bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all text-sm sm:text-base">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg><span>Deposit</span> </button> <button id="withdraw-btn" class="flex-1 btn-hover bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl shadow-rose-600/30 flex items-center justify-center gap-2 transition-all text-sm sm:text-base">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4" />
+        </svg><span>Withdraw</span> </button>
+      </div>
+     </div><!-- Transaction Form (Hidden by default) -->
+     <div id="transaction-form" class="hidden card-glow rounded-2xl sm:rounded-3xl p-5 sm:p-6">
+      <div class="fade-in">
+       <h3 id="form-title" class="text-lg sm:text-xl font-bold text-indigo-300 mb-4 sm:mb-5">New Transaction</h3><!-- Error Message -->
+       <div id="error-message" class="hidden mb-3 sm:mb-4 p-3 sm:p-4 bg-rose-500/20 border border-rose-500/50 rounded-xl sm:rounded-2xl text-rose-300 text-xs sm:text-sm font-medium flex items-start gap-2 sm:gap-3 backdrop-blur-sm">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg><span id="error-text"></span>
+       </div>
+       <div class="space-y-3 sm:space-y-4">
+        <div><label for="amount-input" class="block text-xs sm:text-sm font-semibold text-indigo-300 mb-2">Amount (₹)</label> <input type="number" id="amount-input" min="1" placeholder="Enter amount" class="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-800/50 border border-indigo-400/30 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 transition-all text-slate-100 placeholder-slate-500 backdrop-blur-sm text-sm sm:text-base">
+        </div>
+        <div><label for="category-select" class="block text-xs sm:text-sm font-semibold text-indigo-300 mb-2">Category</label> <select id="category-select" class="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-800/50 border border-indigo-400/30 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 transition-all text-slate-100 backdrop-blur-sm text-sm sm:text-base cursor-pointer"> <option value="general">General</option> <option value="salary">Salary</option> <option value="food">Food</option> <option value="rent">Rent</option> <option value="shopping">Shopping</option> <option value="bills">Bills</option> <option value="investment">Investment</option> </select>
+        </div>
+        <div><label for="note-input" class="block text-xs sm:text-sm font-semibold text-indigo-300 mb-2">Note (optional)</label> <input type="text" id="note-input" placeholder="Add a note..." class="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-800/50 border border-indigo-400/30 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 transition-all text-slate-100 placeholder-slate-500 backdrop-blur-sm text-sm sm:text-base">
+        </div>
+        <div class="flex gap-2 sm:gap-3 pt-2 sm:pt-3"><button id="submit-btn" class="flex-1 btn-hover bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl shadow-lg shadow-indigo-600/30 transition-all text-sm sm:text-base"> Submit </button> <button id="cancel-btn" class="btn-hover bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 text-slate-300 font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl transition-all text-sm sm:text-base"> Cancel </button>
+        </div>
+       </div>
+      </div>
+     </div><!-- Search and Filter -->
+     <div class="card-glow rounded-2xl sm:rounded-3xl p-4 sm:p-6">
+      <div class="relative mb-4 sm:mb-5">
+       <svg class="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-indigo-400/50" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+       </svg><input type="text" id="search-input" placeholder="Search..." class="w-full pl-9 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 bg-slate-800/50 border border-indigo-400/30 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 transition-all text-slate-100 placeholder-slate-500 backdrop-blur-sm text-sm sm:text-base">
+      </div>
+      <div class="flex gap-2 sm:gap-3 mb-3"><button data-filter="all" class="filter-btn active flex-1 py-2 sm:py-2.5 px-2 sm:px-4 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm transition-all bg-gradient-to-r from-indigo-600 to-purple-600 text-white"> All </button> <button data-filter="deposit" class="filter-btn flex-1 py-2 sm:py-2.5 px-2 sm:px-4 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm transition-all bg-slate-700/50 text-slate-300 border border-slate-600/50 hover:border-slate-500/50"> Deposit </button> <button data-filter="withdraw" class="filter-btn flex-1 py-2 sm:py-2.5 px-2 sm:px-4 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm transition-all bg-slate-700/50 text-slate-300 border border-slate-600/50 hover:border-slate-500/50"> Withdraw </button>
+      </div>
+      <div id="category-filters" class="flex flex-wrap gap-2"></div>
+     </div><!-- Transaction History -->
+     <div class="card-glow rounded-2xl sm:rounded-3xl p-4 sm:p-6 pb-20 sm:pb-6">
+      <h3 class="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-4 sm:mb-5">Recent Transactions</h3>
+      <div id="transactions-container">
+       <div id="empty-state" class="text-center py-12 sm:py-16">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-5 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-400/30 flex items-center justify-center">
+         <svg class="w-8 h-8 sm:w-10 sm:h-10 text-indigo-400/50" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+         </svg>
+        </div>
+        <p id="empty-message" class="text-slate-300 font-semibold text-sm sm:text-base">No transactions yet</p>
+        <p class="text-slate-500 text-xs sm:text-sm mt-2">Start by making a deposit</p>
+       </div>
+       <div id="transactions-list" class="space-y-2 sm:space-y-3"></div>
+      </div>
+     </div>
+    </div><!-- Footer -->
+    <p class="text-center text-slate-500 text-xs mt-6 sm:mt-8 font-light tracking-wide">Secured &amp; Managed with Canva</p>
+   </div>
+  </div><!-- Analytics Drawer -->
+  <div id="analytics-drawer-backdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 drawer-backdrop" style="animation: fadeIn 0.3s ease-out;">
+   <div id="analytics-drawer" class="drawer-content fixed right-0 top-0 bottom-0 w-full sm:max-w-md bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-l border-indigo-400/20 overflow-y-auto"><!-- Drawer Header -->
+    <div class="sticky top-0 z-20 bg-gradient-to-b from-slate-950 to-slate-950/80 border-b border-indigo-400/20 backdrop-blur-sm p-4 sm:p-6 flex items-center justify-between">
+     <h2 class="text-lg sm:text-xl font-bold text-indigo-300">Analytics</h2><button id="drawer-close-btn" class="btn-hover w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-slate-800/50 hover:bg-slate-800 text-slate-400 hover:text-slate-200 flex items-center justify-center transition-all">
+      <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg></button>
+    </div><!-- Drawer Content -->
+    <div class="p-4 sm:p-6 space-y-4 sm:space-y-6"><!-- Monthly Summary Section -->
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xs font-bold text-indigo-400 uppercase tracking-widest">
+          Analytics Summary
+        </h3>
+
+        <button id="toggle-custom-period"
+          class="text-xs bg-indigo-600/20 border border-indigo-400/30 text-indigo-300 px-3 py-1 rounded-lg">
+          Choose Month / Year
+        </button>
+      </div>
+
+      <!-- Custom Month/Year Selector -->
+      <div id="custom-period-controls"
+        class="hidden grid grid-cols-2 gap-3 mb-4">
+
+        <select id="month-select"
+          class="bg-slate-800/50 border border-indigo-400/30 rounded-lg px-3 py-2 text-sm text-slate-100">
+        </select>
+
+        <select id="year-select"
+          class="bg-slate-800/50 border border-indigo-400/30 rounded-lg px-3 py-2 text-sm text-slate-100">
+        </select>
+      </div>
+
+      <div class="space-y-4">
+
+        <!-- This Month -->
+        <div class="card-glow rounded-2xl p-4 border border-indigo-400/20">
+          <p class="text-xs text-indigo-400 font-semibold uppercase tracking-widest mb-3">
+            This Month
+          </p>
+          <div id="this-month-summary" class="grid grid-cols-3 gap-2 text-center text-sm">
+          </div>
+        </div>
+
+        <!-- Previous Month -->
+        <div class="card-glow rounded-2xl p-4 border border-indigo-400/20">
+          <p class="text-xs text-indigo-400 font-semibold uppercase tracking-widest mb-3">
+            Previous Month
+          </p>
+          <div id="previous-month-summary" class="grid grid-cols-3 gap-2 text-center text-sm">
+          </div>
+        </div>
+
+        <!-- This Year -->
+        <div class="card-glow rounded-2xl p-4 border border-indigo-400/20">
+          <p class="text-xs text-indigo-400 font-semibold uppercase tracking-widest mb-3">
+            This Year
+          </p>
+          <div id="this-year-summary" class="grid grid-cols-3 gap-2 text-center text-sm">
+          </div>
+        </div>
+
+        <!-- Custom Selected Period -->
+        <div id="custom-summary-wrapper"
+            class="hidden card-glow rounded-2xl p-4 border border-indigo-400/20">
+          <p class="text-xs text-indigo-400 font-semibold uppercase tracking-widest mb-3">
+            Selected Period
+          </p>
+          <div id="custom-summary" class="grid grid-cols-3 gap-2 text-center text-sm">
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- Safe spacing at bottom -->
+     <div class="h-4"></div>
+    </div>
+   </div>
+  </div><!-- Transaction Detail Modal -->
+  <div id="modal-backdrop" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 modal-backdrop flex items-center justify-center p-4">
+   <div id="modal-content" class="modal-content card-glow rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-sm max-h-[85vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-5 sm:mb-6">
+     <h2 class="text-xl sm:text-2xl font-bold text-indigo-300">Details</h2><button id="modal-close" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-700/50 hover:bg-slate-700 text-slate-400 hover:text-slate-200 flex items-center justify-center transition-all">
+      <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg></button>
+    </div>
+    <div class="space-y-3 sm:space-y-4 mb-5 sm:mb-6"><!-- Transaction Type Badge -->
+     <div class="flex items-center gap-3">
+      <div id="modal-badge" class="deposit-badge w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
+       <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+       </svg>
+      </div>
+      <div>
+       <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Type</p>
+       <p id="modal-type" class="text-base sm:text-lg font-bold text-slate-100">Deposit</p>
+      </div>
+     </div><!-- Amount -->
+     <div class="bg-slate-800/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-700/50">
+      <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1 sm:mb-2">Amount</p>
+      <p id="modal-amount" class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">₹0</p>
+     </div><!-- Category -->
+     <div class="bg-slate-800/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-700/50">
+      <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-2">Category</p><span id="modal-category" class="category-badge category-general">General</span>
+     </div><!-- Date & Time -->
+     <div class="grid grid-cols-2 gap-2 sm:gap-3">
+      <div class="bg-slate-800/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-700/50">
+       <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1 sm:mb-2">Date</p>
+       <p id="modal-date" class="text-xs sm:text-sm font-bold text-slate-100">Jan 15, 2024</p>
+      </div>
+      <div class="bg-slate-800/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-700/50">
+       <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1 sm:mb-2">Time</p>
+       <p id="modal-time" class="text-xs sm:text-sm font-bold text-slate-100">2:30 PM</p>
+      </div>
+     </div><!-- Note -->
+     <div id="note-section" class="bg-slate-800/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-slate-700/50">
+      <p class="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1 sm:mb-2">Note</p>
+      <p id="modal-note" class="text-xs sm:text-sm text-slate-200 font-medium break-words">No note added</p>
+     </div>
+    </div><!-- Action Buttons -->
+    <div class="flex gap-2 sm:gap-3"><button id="modal-edit" class="flex-1 btn-hover bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-1.5 text-xs sm:text-base">
+      <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+      </svg><span class="hidden sm:inline">Edit</span> </button> <button id="modal-delete" class="flex-1 btn-hover bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl shadow-lg shadow-rose-600/30 transition-all flex items-center justify-center gap-1.5 text-xs sm:text-base">
+      <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg><span class="hidden sm:inline">Delete</span> </button>
+    </div>
+   </div>
+  </div><!-- Delete Confirmation Modal -->
+  <div id="confirm-modal-backdrop" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 modal-backdrop flex items-center justify-center p-4">
+   <div id="confirm-modal-content" class="modal-content card-glow rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-xs sm:max-w-sm">
+    <div class="mb-5 sm:mb-6">
+     <div class="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full bg-gradient-to-br from-rose-500/20 to-red-500/20 border border-rose-500/30 flex items-center justify-center">
+      <svg class="w-7 h-7 sm:w-8 sm:h-8 text-rose-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4v2m0 0v2m0-2h2m0 0h2M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+      </svg>
+     </div>
+     <h3 class="text-lg sm:text-xl font-bold text-slate-100 text-center">Delete?</h3>
+     <p class="text-slate-400 text-center mt-2 text-xs sm:text-sm">This cannot be undone.</p>
+    </div>
+    <div class="flex gap-2 sm:gap-3"><button id="confirm-cancel" class="flex-1 btn-hover bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 text-slate-300 font-bold py-2.5 sm:py-3 px-4 rounded-lg sm:rounded-xl transition-all text-sm sm:text-base"> Cancel </button> <button id="confirm-delete" class="flex-1 btn-hover bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold py-2.5 sm:py-3 px-4 rounded-lg sm:rounded-xl shadow-lg shadow-rose-600/30 transition-all text-sm sm:text-base"> Delete </button>
+    </div>
+   </div>
+  </div>
+  <!-- Edit Modal -->
+<div id="edit-modal-backdrop"
+class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50
+modal-backdrop flex items-center justify-center p-4">
+
+  <div id="edit-modal-content"
+  class="modal-content card-glow rounded-2xl sm:rounded-3xl
+  p-5 sm:p-6 w-full sm:max-w-sm
+  max-h-[85vh] overflow-y-auto flex flex-col">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-5 sm:mb-6">
+      <h2 class="text-xl sm:text-2xl font-bold text-indigo-300">Edit</h2>
+      <button id="edit-modal-close"
+      class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-700/50 hover:bg-slate-700
+      text-slate-400 hover:text-slate-200 flex items-center justify-center transition-all">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    <div id="edit-error-message"
+    class="hidden mb-4 p-3 bg-rose-500/20 border border-rose-500/50
+    rounded-xl text-rose-300 text-xs sm:text-sm font-medium flex items-start gap-2 backdrop-blur-sm">
+      <svg class="w-4 h-4 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd"
+        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+        clip-rule="evenodd"/>
+      </svg>
+      <span id="edit-error-text"></span>
+    </div>
+
+    <!-- Form Fields -->
+    <div class="space-y-4 flex-1">
+
+      <div>
+        <label class="block text-xs sm:text-sm font-semibold text-indigo-300 mb-2">
+          Amount (₹)
+        </label>
+        <input type="number" id="edit-amount-input" min="1"
+        class="w-full px-4 py-3 bg-slate-800/50 border border-indigo-400/30
+        rounded-xl focus:ring-2 focus:ring-indigo-500
+        text-slate-100 placeholder-slate-500 text-sm sm:text-base"
+        placeholder="Enter amount">
+      </div>
+
+      <div>
+        <label class="block text-xs sm:text-sm font-semibold text-indigo-300 mb-2">
+          Category
+        </label>
+        <select id="edit-category-select"
+        class="w-full px-4 py-3 bg-slate-800/50 border border-indigo-400/30
+        rounded-xl focus:ring-2 focus:ring-indigo-500
+        text-slate-100 text-sm sm:text-base cursor-pointer">
+          <option value="general">General</option>
+          <option value="salary">Salary</option>
+          <option value="food">Food</option>
+          <option value="rent">Rent</option>
+          <option value="shopping">Shopping</option>
+          <option value="bills">Bills</option>
+          <option value="investment">Investment</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs sm:text-sm font-semibold text-indigo-300 mb-2">
+          Note
+        </label>
+        <input type="text" id="edit-note-input"
+        class="w-full px-4 py-3 bg-slate-800/50 border border-indigo-400/30
+        rounded-xl focus:ring-2 focus:ring-indigo-500
+        text-slate-100 placeholder-slate-500 text-sm sm:text-base"
+        placeholder="Add or update note...">
+      </div>
+
+    </div>
+
+    <!-- Sticky Buttons -->
+    <div class="pt-4 border-t border-slate-700/50 mt-4">
+      <div class="flex gap-3">
+        <button id="edit-cancel"
+        class="flex-1 btn-hover bg-slate-700/50 hover:bg-slate-700
+        border border-slate-600/50 text-slate-300 font-semibold
+        py-3 rounded-xl transition-all text-sm sm:text-base">
+          Cancel
+        </button>
+
+        <button id="edit-save"
+        class="flex-1 btn-hover bg-gradient-to-r from-indigo-600 to-purple-600
+        hover:from-indigo-500 hover:to-purple-500 text-white font-bold
+        py-3 rounded-xl shadow-lg shadow-indigo-600/30
+        transition-all text-sm sm:text-base">
+          Save
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    getDocs, 
+    deleteDoc, 
+    doc, 
+    updateDoc,
+    onSnapshot,
+    query,
+    orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBq7-m5-6fXJO280MVlPkvhiwqAJlMETiE",
+    authDomain: "my-bank-54a9a.firebaseapp.com",
+    projectId: "my-bank-54a9a",
+    storageBucket: "my-bank-54a9a.firebasestorage.app",
+    messagingSenderId: "770127789159",
+    appId: "1:770127789159:web:0e41d07d9ecad84806a8c2",
+    measurementId: "G-18GYVVQC9G"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  window.firestore = { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy };
+</script>
+
+
+  <script type="module">
+    const defaultConfig = {
+      app_title: 'Personal Banking',
+      balance_label: 'Available Balance',
+      empty_message: 'No transactions yet',
+      font_family: 'Syne'
+    };
+
+    const categories = ['salary', 'food', 'rent', 'shopping', 'bills', 'investment', 'general'];
+    let transactions = [];
+    let currentFilter = 'all';
+    let currentCategoryFilter = null;
+    let searchQuery = '';
+    let formType = null;
+    let isSubmitting = false;
+    let selectedTransactionId = null;
+    let analyticsDrawerOpen = false;
+
+    // DOM Elements
+    const balanceAmount = document.getElementById('balance-amount');
+    const balanceLabel = document.getElementById('balance-label');
+    const appTitle = document.getElementById('app-title');
+    const emptyMessage = document.getElementById('empty-message');
+    const depositBtn = document.getElementById('deposit-btn');
+    const withdrawBtn = document.getElementById('withdraw-btn');
+    const transactionForm = document.getElementById('transaction-form');
+    const formTitle = document.getElementById('form-title');
+    const amountInput = document.getElementById('amount-input');
+    const categorySelect = document.getElementById('category-select');
+    const noteInput = document.getElementById('note-input');
+    const submitBtn = document.getElementById('submit-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const searchInput = document.getElementById('search-input');
+    const filterBtns = document.querySelectorAll('[data-filter]');
+    const categoryFiltersContainer = document.getElementById('category-filters');
+    const transactionsList = document.getElementById('transactions-list');
+    const emptyState = document.getElementById('empty-state');
+    const errorMessage = document.getElementById('error-message');
+    const errorText = document.getElementById('error-text');
+
+    // Analytics Drawer Elements
+    const analyticsMenuBtn = document.getElementById('analytics-menu-btn');
+    const analyticsDrawerBackdrop = document.getElementById('analytics-drawer-backdrop');
+    const analyticsDrawer = document.getElementById('analytics-drawer');
+    const drawerCloseBtn = document.getElementById('drawer-close-btn');
+
+    // Monthly Summary Elements
+    const thisMonthSummary = document.getElementById('this-month-summary');
+    const previousMonthSummary = document.getElementById('previous-month-summary');
+    const thisYearSummary = document.getElementById('this-year-summary');
+    const customSummary = document.getElementById('custom-summary');
+    const customWrapper = document.getElementById('custom-summary-wrapper');
+    const toggleCustomBtn = document.getElementById('toggle-custom-period');
+    const customControls = document.getElementById('custom-period-controls');
+    const monthSelect = document.getElementById('month-select');
+    const yearSelect = document.getElementById('year-select');
+
+    // Modal Elements
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const modalClose = document.getElementById('modal-close');
+    const modalBadge = document.getElementById('modal-badge');
+    const modalType = document.getElementById('modal-type');
+    const modalAmount = document.getElementById('modal-amount');
+    const modalCategory = document.getElementById('modal-category');
+    const modalDate = document.getElementById('modal-date');
+    const modalTime = document.getElementById('modal-time');
+    const modalNote = document.getElementById('modal-note');
+    const noteSection = document.getElementById('note-section');
+    const modalEditBtn = document.getElementById('modal-edit');
+    const modalDeleteBtn = document.getElementById('modal-delete');
+
+    // Delete Confirmation Modal
+    const confirmModalBackdrop = document.getElementById('confirm-modal-backdrop');
+    const confirmCancelBtn = document.getElementById('confirm-cancel');
+    const confirmDeleteBtn = document.getElementById('confirm-delete');
+
+    // Edit Modal
+    const editModalBackdrop = document.getElementById('edit-modal-backdrop');
+    const editModalClose = document.getElementById('edit-modal-close');
+    const editAmountInput = document.getElementById('edit-amount-input');
+    const editCategorySelect = document.getElementById('edit-category-select');
+    const editNoteInput = document.getElementById('edit-note-input');
+    const editSaveBtn = document.getElementById('edit-save');
+    const editCancelBtn = document.getElementById('edit-cancel');
+    const editErrorMessage = document.getElementById('edit-error-message');
+    const editErrorText = document.getElementById('edit-error-text');
+
+    function calculateBalance() {
+      return transactions.reduce((sum, t) => {
+        return t.type === 'deposit' ? sum + t.amount : sum - t.amount;
+      }, 0);
+    }
+
+    function updateBalanceDisplay() {
+      const balance = calculateBalance();
+      balanceAmount.textContent = balance.toLocaleString('en-IN');
+    }
+
+    function calculatePeriodSummary(month, year) {
+      let deposits = 0;
+      let withdrawals = 0;
+
+      transactions.forEach(t => {
+        const d = new Date(t.date);
+
+        if (d.getMonth() === month && d.getFullYear() === year) {
+          if (t.type === 'deposit') deposits += t.amount;
+          else withdrawals += t.amount;
+        }
+      });
+
+      return { deposits, withdrawals, net: deposits - withdrawals };
+    }
+
+    function calculateYearSummary(year) {
+      let deposits = 0;
+      let withdrawals = 0;
+
+      transactions.forEach(t => {
+        const d = new Date(t.date);
+
+        if (d.getFullYear() === year) {
+          if (t.type === 'deposit') deposits += t.amount;
+          else withdrawals += t.amount;
+        }
+      });
+
+      return { deposits, withdrawals, net: deposits - withdrawals };
+    }
+
+    function formatSummaryText(summary) {
+      return `
+        <div class="bg-slate-800/30 rounded-xl p-3 border border-slate-700/50">
+          <p class="text-xs text-slate-400 mb-1">Deposits</p>
+          <p class="font-bold text-emerald-400 text-base">
+            ₹${summary.deposits.toLocaleString('en-IN')}
+          </p>
+        </div>
+
+        <div class="bg-slate-800/30 rounded-xl p-3 border border-slate-700/50">
+          <p class="text-xs text-slate-400 mb-1">Withdrawals</p>
+          <p class="font-bold text-rose-400 text-base">
+            ₹${summary.withdrawals.toLocaleString('en-IN')}
+          </p>
+        </div>
+
+        <div class="bg-slate-800/30 rounded-xl p-3 border border-slate-700/50">
+          <p class="text-xs text-slate-400 mb-1">Net</p>
+          <p class="font-bold ${summary.net >= 0 ? 'text-indigo-400' : 'text-rose-400'} text-base">
+            ₹${summary.net.toLocaleString('en-IN')}
+          </p>
+        </div>
+      `;
+    }
+
+    function updateAnalyticsSummary() {
+      const now = new Date();
+
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+
+      const prevMonthDate = new Date(currentYear, currentMonth - 1);
+      const prevMonth = prevMonthDate.getMonth();
+      const prevYear = prevMonthDate.getFullYear();
+
+      const thisMonth = calculatePeriodSummary(currentMonth, currentYear);
+      const previousMonth = calculatePeriodSummary(prevMonth, prevYear);
+      const thisYear = calculateYearSummary(currentYear);
+
+      thisMonthSummary.innerHTML = formatSummaryText(thisMonth);
+      previousMonthSummary.innerHTML = formatSummaryText(previousMonth);
+      thisYearSummary.innerHTML = formatSummaryText(thisYear);
+    }
+
+
+    function createCategoryFilters() {
+      categoryFiltersContainer.innerHTML = '';
+      categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn category-filter py-1.5 px-3 rounded-lg text-xs font-semibold transition-all bg-slate-700/50 text-slate-300 border border-slate-600/50 hover:border-slate-500/50';
+        btn.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+        btn.dataset.category = cat;
+        btn.addEventListener('click', () => {
+          currentCategoryFilter = currentCategoryFilter === cat ? null : cat;
+          updateCategoryFilterButtons();
+          renderTransactions();
+        });
+        categoryFiltersContainer.appendChild(btn);
+      });
+    }
+
+    function updateCategoryFilterButtons() {
+      document.querySelectorAll('.category-filter').forEach(btn => {
+        const isActive = btn.dataset.category === currentCategoryFilter;
+        btn.classList.toggle('bg-gradient-to-r', isActive);
+        btn.classList.toggle('from-indigo-600', isActive);
+        btn.classList.toggle('to-purple-600', isActive);
+        btn.classList.toggle('text-white', isActive);
+        btn.classList.toggle('bg-slate-700/50', !isActive);
+        btn.classList.toggle('text-slate-300', !isActive);
+        btn.classList.toggle('border-slate-600/50', !isActive);
+      });
+    }
+
+    function showError(message) {
+      errorText.textContent = message;
+      errorMessage.classList.remove('hidden');
+      setTimeout(() => {
+        errorMessage.classList.add('hidden');
+      }, 4000);
+    }
+
+    function hideError() {
+      errorMessage.classList.add('hidden');
+    }
+
+    function showForm(type) {
+      formType = type;
+      formTitle.textContent = type === 'deposit' ? 'Make a Deposit' : 'Make a Withdrawal';
+      transactionForm.classList.remove('hidden');
+      amountInput.value = '';
+      categorySelect.value = 'general';
+      noteInput.value = '';
+      hideError();
+      amountInput.focus();
+      window.scrollTo(0, 0);
+    }
+
+    function hideForm() {
+      transactionForm.classList.add('hidden');
+      formType = null;
+      hideError();
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+    }
+
+    function formatTime(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+    }
+
+    function getCategoryBadgeClass(category) {
+      return `category-badge category-${category || 'general'}`;
+    }
+
+    function createTransactionElement(transaction) {
+      const isDeposit = transaction.type === 'deposit';
+      const el = document.createElement('div');
+      el.className = 'transaction-item card-glow-hover card-glow rounded-lg sm:rounded-2xl p-3 sm:p-4';
+      el.dataset.transactionId = transaction.id;
+      
+      el.innerHTML = `
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-full flex items-center justify-center flex-shrink-0 ${isDeposit ? 'deposit-badge' : 'withdraw-badge'}">
+              <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ${isDeposit 
+                  ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>'
+                  : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>'}
+              </svg>
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <p class="font-bold text-xs sm:text-sm ${isDeposit ? 'text-emerald-400' : 'text-rose-400'}">${isDeposit ? 'Deposit' : 'Withdrawal'}</p>
+                <span class="${getCategoryBadgeClass(transaction.category)}">${(transaction.category || 'general').charAt(0).toUpperCase() + (transaction.category || 'general').slice(1)}</span>
+              </div>
+              <p class="text-xs text-slate-400">${formatDate(transaction.date)}</p>
+            </div>
+          </div>
+          <div class="text-right flex-shrink-0">
+            <p class="font-black text-sm sm:text-lg ${isDeposit ? 'text-emerald-400' : 'text-rose-400'}">
+              ${isDeposit ? '+' : '-'}₹${transaction.amount.toLocaleString('en-IN')}
+            </p>
+            ${transaction.note ? `<p class="text-xs text-slate-500 line-clamp-1 max-w-[120px] sm:max-w-[150px]">${transaction.note}</p>` : ''}
+          </div>
+        </div>
+      `;
+      
+      el.addEventListener('click', () => openModal(transaction.id));
+      return el;
+    }
+
+    function openModal(transactionId) {
+      selectedTransactionId = transactionId;
+      const transaction = transactions.find(t => t.id === transactionId);
+      if (!transaction) return;
+
+      const isDeposit = transaction.type === 'deposit';
+      
+      modalBadge.className = isDeposit ? 'deposit-badge w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0' : 'withdraw-badge w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0';
+      modalBadge.innerHTML = isDeposit
+        ? `<svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+          </svg>`
+        : `<svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+          </svg>`;
+      modalType.textContent = isDeposit ? 'Deposit' : 'Withdrawal';
+      modalAmount.textContent = `₹${transaction.amount.toLocaleString('en-IN')}`;
+      modalCategory.textContent = (transaction.category || 'General').charAt(0).toUpperCase() + (transaction.category || 'general').slice(1);
+      modalCategory.className = getCategoryBadgeClass(transaction.category);
+      modalDate.textContent = formatDate(transaction.date);
+      modalTime.textContent = formatTime(transaction.date);
+      
+      if (transaction.note) {
+        modalNote.textContent = transaction.note;
+        noteSection.classList.remove('hidden');
+      } else {
+        noteSection.classList.add('hidden');
+      }
+      
+      modalBackdrop.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      modalBackdrop.classList.add('hidden');
+    }
+
+    function openEditModal() {
+      const transaction = transactions.find(t => t.id === selectedTransactionId);
+      if (!transaction) return;
+
+      closeModal();
+      editAmountInput.value = transaction.amount;
+      editCategorySelect.value = transaction.category || 'general';
+      editNoteInput.value = transaction.note || '';
+      editErrorMessage.classList.add('hidden');
+      editModalBackdrop.classList.remove('hidden');
+      editAmountInput.focus();
+    }
+
+    function closeEditModal() {
+      editModalBackdrop.classList.add('hidden');
+    }
+
+    function openConfirmModal() {
+      closeModal();
+      confirmModalBackdrop.classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+      confirmModalBackdrop.classList.add('hidden');
+    }
+
+    function openAnalyticsDrawer() {
+      analyticsDrawerOpen = true;
+      analyticsDrawerBackdrop.classList.remove('hidden');
+      analyticsDrawer.classList.remove('drawer-close');
+      analyticsDrawer.classList.add('drawer-content');
+      
+    }
+
+    function closeAnalyticsDrawer() {
+      analyticsDrawerOpen = false;
+      analyticsDrawer.classList.remove('drawer-content');
+      analyticsDrawer.classList.add('drawer-close');
+      setTimeout(() => {
+        analyticsDrawerBackdrop.classList.add('hidden');
+      }, 300);
+    }
+
+    function renderTransactions() {
+      const filtered = transactions.filter(t => {
+        const matchesTypeFilter = currentFilter === 'all' || t.type === currentFilter;
+        const matchesCategoryFilter = !currentCategoryFilter || t.category === currentCategoryFilter;
+        const matchesSearch = searchQuery === '' || 
+          t.note?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          t.amount.toString().includes(searchQuery) ||
+          t.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (t.category || 'general').toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesTypeFilter && matchesCategoryFilter && matchesSearch;
+      });
+
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+        transactionsList.innerHTML = '';
+      } else {
+        emptyState.classList.add('hidden');
+        transactionsList.innerHTML = '';
+        filtered.forEach(transaction => {
+          transactionsList.appendChild(createTransactionElement(transaction));
+        });
+      }
+    }
+
+    async function submitTransaction() {
+      if (isSubmitting) return;
+      
+      const amount = parseInt(amountInput.value);
+      const category = categorySelect.value;
+      const note = noteInput.value.trim();
+
+      if (!amount || amount <= 0) {
+        showError('Please enter a valid amount');
+        return;
+      }
+
+      if (formType === 'withdraw' && amount > calculateBalance()) {
+        showError('Insufficient balance for this withdrawal');
+        return;
+      }
+
+      isSubmitting = true;
+      submitBtn.disabled = true;
+      hideError();
+
+      const newTransaction = {
+        type: formType,
+        amount: amount,
+        category: category,
+        note: note,
+        date: new Date().toISOString()
+      };
+
+      try {
+        await window.firestore.addDoc(
+          window.firestore.collection(window.db, "transactions"),
+          newTransaction
+        );
+        hideForm();
+      } catch (error) {
+        console.error(error);
+        showError("Database error. Check console.");
+      }
+
+      isSubmitting = false;
+      submitBtn.disabled = false;
+    }
+
+    async function deleteTransaction() {
+      closeConfirmModal();
+      
+      try {
+        await window.firestore.deleteDoc(
+          window.firestore.doc(window.db, "transactions", selectedTransactionId)
+        );
+      } catch (error) {
+        console.error(error);
+      }
+
+      selectedTransactionId = null;
+    }
+
+    async function updateTransaction() {
+      const transaction = transactions.find(t => t.id === selectedTransactionId);
+      if (!transaction) return;
+
+      const amount = parseInt(editAmountInput.value);
+      const category = editCategorySelect.value;
+      const note = editNoteInput.value.trim();
+
+      if (!amount || amount <= 0) {
+        editErrorText.textContent = 'Please enter a valid amount';
+        editErrorMessage.classList.remove('hidden');
+        return;
+      }
+
+      const currentBalance = calculateBalance();
+      const oldAmount = transaction.type === 'deposit' ? transaction.amount : -transaction.amount;
+      const newAmount = transaction.type === 'deposit' ? amount : -amount;
+      const newBalance = currentBalance - oldAmount + newAmount;
+      
+      if (newBalance < 0) {
+        editErrorText.textContent = 'Insufficient balance for this amount';
+        editErrorMessage.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        await window.firestore.updateDoc(
+          window.firestore.doc(window.db, "transactions", selectedTransactionId),
+          { amount, category, note }
+        );
+        closeEditModal();
+      } catch (error) {
+        console.error(error);
+      }
+
+      closeEditModal();
+      editErrorMessage.classList.add('hidden');
+      selectedTransactionId = null;
+    }
+
+    // Event Listeners
+    depositBtn.addEventListener('click', () => showForm('deposit'));
+    withdrawBtn.addEventListener('click', () => showForm('withdraw'));
+    cancelBtn.addEventListener('click', hideForm);
+
+    // Custom Analytics Controls
+    toggleCustomBtn.addEventListener('click', () => {
+      customControls.classList.toggle('hidden');
+      customWrapper.classList.toggle('hidden');
+    });
+
+    monthSelect.addEventListener('change', updateCustomPeriod);
+    yearSelect.addEventListener('change', updateCustomPeriod);
+
+    function updateCustomPeriod() {
+      const month = parseInt(monthSelect.value);
+      const year = parseInt(yearSelect.value);
+
+      if (isNaN(month) || isNaN(year)) return;
+
+      const summary = calculatePeriodSummary(month, year);
+      customSummary.innerHTML = formatSummaryText(summary);
+    }
+    
+    submitBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      submitTransaction();
+    });
+
+    analyticsMenuBtn.addEventListener('click', openAnalyticsDrawer);
+    drawerCloseBtn.addEventListener('click', closeAnalyticsDrawer);
+
+    analyticsDrawerBackdrop.addEventListener('click', (e) => {
+      if (e.target === analyticsDrawerBackdrop) {
+        closeAnalyticsDrawer();
+      }
+    });
+
+    modalClose.addEventListener('click', closeModal);
+    modalEditBtn.addEventListener('click', openEditModal);
+    modalDeleteBtn.addEventListener('click', openConfirmModal);
+
+    editModalClose.addEventListener('click', closeEditModal);
+    editCancelBtn.addEventListener('click', closeEditModal);
+    editSaveBtn.addEventListener('click', updateTransaction);
+
+    confirmCancelBtn.addEventListener('click', closeConfirmModal);
+    confirmDeleteBtn.addEventListener('click', deleteTransaction);
+
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderTransactions();
+    });
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentFilter = btn.dataset.filter;
+        filterBtns.forEach(b => {
+          b.classList.remove('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'text-white');
+          b.classList.add('bg-slate-700/50', 'text-slate-300', 'border', 'border-slate-600/50', 'hover:border-slate-500/50');
+        });
+        btn.classList.remove('bg-slate-700/50', 'text-slate-300', 'border', 'border-slate-600/50', 'hover:border-slate-500/50');
+        btn.classList.add('bg-gradient-to-r', 'from-indigo-600', 'to-purple-600', 'text-white');
+        renderTransactions();
+      });
+    });
+
+    amountInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitTransaction();
+      }
+    });
+
+    // Close modals on backdrop click
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) closeModal();
+    });
+
+    editModalBackdrop.addEventListener('click', (e) => {
+      if (e.target === editModalBackdrop) closeEditModal();
+    });
+
+    confirmModalBackdrop.addEventListener('click', (e) => {
+      if (e.target === confirmModalBackdrop) closeConfirmModal();
+    });
+
+    // Element SDK setup
+    async function onConfigChange(config) {
+      const customFont = config.font_family || defaultConfig.font_family || 'Syne';
+      const baseFontStack = 'Syne, system-ui, sans-serif';
+      const fontStack = customFont ? `${customFont}, ${baseFontStack}` : baseFontStack;
+      
+      document.body.style.fontFamily = fontStack;
+      appTitle.textContent = config.app_title || defaultConfig.app_title;
+      balanceLabel.textContent = config.balance_label || defaultConfig.balance_label;
+      emptyMessage.textContent = config.empty_message || defaultConfig.empty_message;
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => window.elementSdk.setConfig({ font_family: value })
+        },
+        fontSizeable: undefined
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['app_title', config.app_title || defaultConfig.app_title],
+        ['balance_label', config.balance_label || defaultConfig.balance_label],
+        ['empty_message', config.empty_message || defaultConfig.empty_message]
+      ]);
+    }
+
+      async function init() {
+        if (window.elementSdk) {
+          window.elementSdk.init({
+            defaultConfig,
+            onConfigChange,
+            mapToCapabilities,
+            mapToEditPanelValues
+          });
+        }
+
+        createCategoryFilters();
+        populateMonthYearSelectors();
+        listenToTransactions(); // 🔥 this is what was missing
+      }
+
+      function populateMonthYearSelectors() {
+        const months = [
+          "January","February","March","April","May","June",
+          "July","August","September","October","November","December"
+        ];
+
+        months.forEach((m, index) => {
+          const option = document.createElement("option");
+          option.value = index;
+          option.textContent = m;
+          monthSelect.appendChild(option);
+        });
+
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear; y >= currentYear - 10; y--) {
+          const option = document.createElement("option");
+          option.value = y;
+          option.textContent = y;
+          yearSelect.appendChild(option);
+        }
+          // ✅ ADD THIS
+          const now = new Date();
+          monthSelect.value = now.getMonth();
+          yearSelect.value = now.getFullYear();
+          updateCustomPeriod();
+      }
+
+      function listenToTransactions() {
+        const { collection, onSnapshot, query, orderBy } = window.firestore;
+
+        const q = query(collection(window.db, "transactions"), orderBy("date", "desc"));
+
+        onSnapshot(q, 
+          (snapshot) => {
+            transactions = [];
+            snapshot.forEach(docSnap => {
+              transactions.push({
+                id: docSnap.id,
+                ...docSnap.data()
+              });
+            });
+
+            updateBalanceDisplay();
+            updateAnalyticsSummary();
+            updateCustomPeriod();
+            renderTransactions();
+          },
+          (error) => {
+            console.error("Snapshot error:", error);
+          }
+        );
+      }
+      
+    init();
+  </script>
+</html>
